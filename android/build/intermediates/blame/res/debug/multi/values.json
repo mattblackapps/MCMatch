@@ -1,23 +1,23 @@
 [
     {
-        "outputFile": "/Users/MC/AndroidStudioProjects/MCMatch/android/build/intermediates/res/merged/debug/values/values.xml",
+        "outputFile": "/home/matthew/AndroidStudioProjects/MCMatch/android/build/intermediates/res/merged/debug/values/values.xml",
         "map": [
             {
                 "to": {
                     "startLine": 2,
                     "startColumn": 4,
                     "startOffset": 55,
-                    "endColumn": 48,
-                    "endOffset": 99
+                    "endColumn": 45,
+                    "endOffset": 96
                 },
                 "from": {
-                    "file": "/Users/MC/AndroidStudioProjects/MCMatch/android/res/values/strings.xml",
+                    "file": "/home/matthew/AndroidStudioProjects/MCMatch/android/res/values/strings.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
                         "startOffset": 56,
-                        "endColumn": 48,
-                        "endOffset": 100
+                        "endColumn": 45,
+                        "endOffset": 97
                     }
                 }
             },
@@ -25,13 +25,13 @@
                 "to": {
                     "startLine": 3,
                     "startColumn": 4,
-                    "startOffset": 104,
+                    "startOffset": 101,
                     "endLine": 10,
                     "endColumn": 12,
-                    "endOffset": 562
+                    "endOffset": 559
                 },
                 "from": {
-                    "file": "/Users/MC/AndroidStudioProjects/MCMatch/android/res/values/styles.xml",
+                    "file": "/home/matthew/AndroidStudioProjects/MCMatch/android/res/values/styles.xml",
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,
