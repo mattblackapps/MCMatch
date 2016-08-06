@@ -1,15 +1,18 @@
 package com.mygdx.mcmatch.com.mygdx.mcmatch.play;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by matthew on 8/2/16.
  */
 public class CardFrame {
 
-    private Map<Integer,Card> cards;
+    private List<Card> cards;
     private int x, y, w, h;
     private int numCards;
     private int cardHeight;
@@ -17,44 +20,53 @@ public class CardFrame {
     private int rows;
     private int columns;
 
-    private static final String TAG = "CardFrame";
     public CardFrame (int x, int y, int width, int height, int numCards, SpriteBatch batch) {
         if(numCards % 2 != 0) {
-//            android.util.Log.e(TAG, "CardFrame: numCards expected even number, received: " + numCards);
+            System.out.println("CardFrame: numCards expected even number, received: " + numCards);
+            return;
         }
+
         this.x = x;
         this.y = y;
         this.w = width;
         this.h = height;
 
+        cards = new ArrayList<Card>();
+
         if(w > h) { // Landscape
-            if((numCards & (numCards - 1)) == 0) { // isPowerOfTwo
-                rows = numCards / 2;
-                columns = rows;
-                int xSpace = (w / columns);
-                int ySpace = (h / rows);
-                int pad = 10;
-
-                int i = 0;
-                for(int c = 0; c < columns; c++) {
-                    for(int r = 0; r < rows; r++) {
-                        int cx = xSpace * c + pad;
-                        int cy = ySpace * r + pad;
-                        int cw = xSpace - pad;
-                        int ch = ySpace - pad;
-                        cards.put(i, new Card(cy,cy,cw,ch,"TEST",batch));
-                    }
-                }
-
-            }
+            rows = getLowFactor(numCards);
+            columns = getHighFactor(numCards);
         } else { // Portrait
+            rows = getHighFactor(numCards);
+            columns = getLowFactor(numCards);
+        }
 
+        int xSpace = (w / columns);
+        int ySpace = (h / rows);
+        int pad = MathUtils.ceil((xSpace + ySpace) * 0.01f);
+
+        int i = 0;
+        for(int c = 0; c < columns && i < numCards; c++) {
+            for(int r = 0; r < rows && i < numCards; r++) {
+                int cx = xSpace * c + pad;
+                int cy = ySpace * r + pad;
+                int cw = xSpace - pad*2;
+                int ch = ySpace - pad*2;
+                cards.add(new Card(cx,cy,cw,ch,"TEST",batch));
+                i++;
+            }
         }
 
     }
 
-    public Map<Integer, Card> getCards() {
+    public List<Card> getCards() {
         return cards;
     }
 
+    private int getHighFactor(int n) {
+        return (int) Math.round(Math.sqrt(n+Math.sqrt(n)));
+    }
+    private int getLowFactor(int n) {
+        return (int) Math.round(Math.sqrt(n));
+    }
 }

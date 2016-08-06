@@ -5,7 +5,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Logger;
 import com.mygdx.mcmatch.com.mygdx.mcmatch.play.Card;
+import com.mygdx.mcmatch.com.mygdx.mcmatch.play.CardFrame;
 import com.mygdx.mcmatch.handlers.GameStateManager;
+import com.mygdx.mcmatch.handlers.TouchProcessor;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by MC on 7/20/16.
@@ -13,11 +18,11 @@ import com.mygdx.mcmatch.handlers.GameStateManager;
 public class Play extends GameState {
 
 	private SpriteBatch batch;
+	private TouchProcessor tp;
 
-	public static Logger logger = new Logger("Dev", Logger.INFO);
-
-	private int numCards = 4;
-	private Card[] cards;
+	private int numCards = 10;
+	private CardFrame cardFrame;
+	private List<Card> cards;
 	private Card cardA;
 	private Card cardB;
 
@@ -31,15 +36,36 @@ public class Play extends GameState {
 		int height = Gdx.graphics.getHeight();
 		height = MathUtils.ceil( height * .85f);
 
+		cardFrame = new CardFrame(0,0,width,height,numCards,batch);
+		cards = cardFrame.getCards();
 
-
+		tp = new TouchProcessor();
+		Gdx.input.setInputProcessor(tp);
+		for (Card card : cards) {
+			tp.register(card);
+		}
 	}
 
 	@Override
 	public void handleInput() {
+		for(Card card : cards) {
+			if(card.getState() == Card.CardState.FLIPPED) {
+				if(cardA == null) {
+					cardA = card;
+				} else if (cardB == null) {
+					cardB = card;
+				}
+				if(cardA != null && cardB != null) {
+					if (cardA.getWord().contains(cardB.getWord())) {
+						cardA.setMatched();
+						cardB.setMatched();
+						cardA = null;
+						cardB = null;
+					}
 
-
-
+				}
+			}
+		}
 	}
 
 	@Override
@@ -52,10 +78,9 @@ public class Play extends GameState {
 
 	@Override
 	public void render() {
-//		card1.render();
-		batch.begin();
-//		card1.renderText();
-		batch.end();
+		for(Card card: cards) {
+			card.render();
+		}
 	}
 
 	@Override

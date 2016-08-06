@@ -6,83 +6,83 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.mcmatch.handlers.Touch;
+import com.mygdx.mcmatch.handlers.Touchable;
 
 /**
  * Created by matthew on 8/1/16.
  */
-public class Card {
+public class Card implements Touchable {
+
+    private CardState state;
+
     private Rectangle rect;
     private Vector2 center;
     private ShapeRenderer shapeRenderer;
     private String word;
-    private boolean flipped = false;
-    private boolean matched = false;
     private BitmapFont font;
     private SpriteBatch batch;
 
     public Card (int x, int y, int width, int height, String word, SpriteBatch batch) {
         this.rect = new Rectangle(x, y, width, height);
-        center = new Vector2(x + width / 2, y + height / 2);
         this.word = word;
-        shapeRenderer = new ShapeRenderer();
-        font = new BitmapFont();
         this.batch = batch;
 
-        flipped = true;
+        center = new Vector2(x + width / 2, y + height / 2);
+        shapeRenderer = new ShapeRenderer();
+        font = new BitmapFont();
 
+        state = CardState.IDLE;
+    }
+
+    public enum CardState {
+        IDLE,FLIPPED,MATCHED
     }
 
     public void render() {
-        if(flipped) {
-            if(matched) {
-
-            } else {
-                renderFlipped();
-            }
-        } else {
-            renderHidden();
-        }
-    }
-
-    public void renderText() {
-        if(flipped) {
-            font.draw(batch, word, center.x, center.y);
+        switch (state) {
+            case IDLE:
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.DARK_GRAY);
+                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+                shapeRenderer.end();
+                break;
+            case FLIPPED:
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(Color.DARK_GRAY);
+                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+                shapeRenderer.end();
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.LIGHT_GRAY);
+                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+                shapeRenderer.end();
+                batch.begin();
+                font.draw(batch, word, center.x, center.y);
+                batch.end();
+                break;
+            default:
+                break;
         }
     }
 
     public void setMatched() {
-        matched = true;
-        font.setColor(Color.GREEN);
+        state = CardState.MATCHED;
     }
 
     public void toggleFlipped() {
-        flipped = !flipped;
+        if(state == CardState.FLIPPED) { state = CardState.IDLE; }
+        else if (state == CardState.IDLE) { state = CardState.FLIPPED; }
     }
 
-    public void setFlipped(boolean b) {
-        flipped = b;
+    public CardState getState() { return state; }
+    public String getWord() { return word; }
+
+    @Override
+    public void touched(Touch touch) {
+        if(touch.state == Touch.TouchState.ENDED) {
+            if(rect.contains(touch.x, touch.y)) {
+                toggleFlipped();
+            }
+        }
     }
-
-    public boolean isFlipped() { return flipped; }
-
-    private void renderFlipped() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-        shapeRenderer.end();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-        shapeRenderer.end();
-    }
-
-    private void renderHidden() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-        shapeRenderer.end();
-    }
-
-
-
 }
