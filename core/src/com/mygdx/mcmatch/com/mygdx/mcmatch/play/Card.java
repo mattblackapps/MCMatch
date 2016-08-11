@@ -2,10 +2,14 @@ package com.mygdx.mcmatch.com.mygdx.mcmatch.play;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.mcmatch.Game;
+import com.mygdx.mcmatch.handlers.FontGuy;
 import com.mygdx.mcmatch.handlers.Touch;
 import com.mygdx.mcmatch.handlers.Touchable;
 
@@ -14,6 +18,9 @@ import com.mygdx.mcmatch.handlers.Touchable;
  */
 public class Card implements Touchable {
 
+    private static final Color fontColor1 = Color.LIGHT_GRAY;
+    private static final Color fontColor2 = Color.GOLD;
+
     private CardState state;
 
     private Rectangle rect;
@@ -21,6 +28,7 @@ public class Card implements Touchable {
     private ShapeRenderer shapeRenderer;
     private String word;
     private BitmapFont font;
+    private GlyphLayout layout;
     private SpriteBatch batch;
 
     public Card (int x, int y, int width, int height, String word, SpriteBatch batch) {
@@ -30,7 +38,11 @@ public class Card implements Touchable {
 
         center = new Vector2(x + width / 2, y + height / 2);
         shapeRenderer = new ShapeRenderer();
-        font = new BitmapFont();
+
+        font = FontGuy.getInstance().getFont();
+        font.setColor(fontColor1);
+        layout = new GlyphLayout();
+        layout.setText(font, word);
 
         state = CardState.IDLE;
     }
@@ -57,8 +69,8 @@ public class Card implements Touchable {
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
                 batch.begin();
-                font.setColor(Color.DARK_GRAY);
-                font.draw(batch, word, center.x, center.y);
+                font.setColor(fontColor1);
+                font.draw(batch, layout, center.x + layout.width / 3, center.y + layout.height / 3);
                 batch.end();
                 break;
             case MATCHED:
@@ -71,8 +83,8 @@ public class Card implements Touchable {
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
                 batch.begin();
-                font.setColor(Color.GOLD);
-                font.draw(batch, word, center.x, center.y);
+                font.setColor(fontColor2);
+                font.draw(batch, layout, center.x + layout.width / 3, center.y + layout.height / 3);
                 batch.end();
             default:
                 break;
