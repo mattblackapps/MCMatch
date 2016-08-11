@@ -57,9 +57,23 @@ public class Card implements Touchable {
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
                 batch.begin();
+                font.setColor(Color.DARK_GRAY);
                 font.draw(batch, word, center.x, center.y);
                 batch.end();
                 break;
+            case MATCHED:
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(Color.GREEN);
+                shapeRenderer.rect(rect.x +10, rect.y +10, rect.width -10, rect.height -10);
+                shapeRenderer.end();
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.GOLD);
+                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+                shapeRenderer.end();
+                batch.begin();
+                font.setColor(Color.GOLD);
+                font.draw(batch, word, center.x, center.y);
+                batch.end();
             default:
                 break;
         }
@@ -78,11 +92,10 @@ public class Card implements Touchable {
     public String getWord() { return word; }
 
     @Override
-    public void touched(Touch touch) {
-        if(touch.state == Touch.TouchState.ENDED) {
-            if(rect.contains(touch.x, touch.y)) {
-                toggleFlipped();
-            }
+    public boolean touched(Touch touch) {
+        if(rect.contains(touch.x, touch.y)) {
+            return true;
         }
+        return false;
     }
 }

@@ -7,7 +7,9 @@ import com.badlogic.gdx.utils.Logger;
 import com.mygdx.mcmatch.com.mygdx.mcmatch.play.Card;
 import com.mygdx.mcmatch.com.mygdx.mcmatch.play.CardFrame;
 import com.mygdx.mcmatch.handlers.GameStateManager;
+import com.mygdx.mcmatch.handlers.Touch;
 import com.mygdx.mcmatch.handlers.TouchProcessor;
+import com.mygdx.mcmatch.handlers.Touchable;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,11 @@ import java.util.Map;
 /**
  * Created by MC on 7/20/16.
  */
-public class Play extends GameState {
+public class Play extends GameState implements Touchable {
+
+	public enum PlayState {
+		IDLE, ONEFLIP
+	}
 
 	private SpriteBatch batch;
 	private TouchProcessor tp;
@@ -27,6 +33,8 @@ public class Play extends GameState {
 	private Card cardB;
 
 	private int score = 0;
+
+	private PlayState state = PlayState.IDLE;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -41,31 +49,32 @@ public class Play extends GameState {
 
 		tp = new TouchProcessor();
 		Gdx.input.setInputProcessor(tp);
-		for (Card card : cards) {
-			tp.register(card);
-		}
+		tp.register(this);
 	}
 
 	@Override
 	public void handleInput() {
-		for(Card card : cards) {
-			if(card.getState() == Card.CardState.FLIPPED) {
-				if(cardA == null) {
-					cardA = card;
-				} else if (cardB == null) {
-					cardB = card;
-				}
-				if(cardA != null && cardB != null) {
-					if (cardA.getWord().contains(cardB.getWord())) {
-						cardA.setMatched();
-						cardB.setMatched();
-						cardA = null;
-						cardB = null;
-					}
 
+	}
+
+	@Override
+	public boolean touched(Touch touch) {
+		if(touch.state == Touch.TouchState.ENDED) {
+			Card card = getTouchedCard(touch);
+			if (card != null) {
+				switch (state) {
+
+					case IDLE:
+						handleFlip(card);
+						break;
+
+					case ONEFLIP:
+						handleMatch(card);
+						break;
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override
@@ -86,5 +95,40 @@ public class Play extends GameState {
 	@Override
 	public void dispose() {
 
+	}
+
+	private Card getTouchedCard(Touch touch) {
+		for(Card card : cards) {
+			if(card.touched(touch)) {
+				return card;
+			}
+		}
+		return null;
+	}
+
+	private void handleFlip(Card card) { // called when play state = idle
+		if(card.getState() == Card.CardState.IDLE) { // card not already matched or flipped
+			card.toggleFlipped();
+			cardA = card;
+			state = PlayState.ONEFLIP;
+		}
+	}
+
+	private void handleMatch(Card card) {
+		if(card.getState() == Card.CardState.IDLE && cardA != null) { // cardA exists
+			cardB = card;
+			if(cardA.getWord().equals(cardB.getWord())) {
+				cardA.setMatched();
+				cardB.setMatched();
+				state = PlayState.IDLE;
+				System.out.println("Cards match: " + Integer.toString(cards.indexOf(cardA)) + " & " + Integer.toString(cards.indexOf(cardB)));
+			} else { // No match
+				cardA.toggleFlipped();
+				cardA = null;
+				cardB = null;
+				state = PlayState.IDLE;
+				System.out.println("Cards dont match: " + Integer.toString(cards.indexOf(cardA)) + " & " + Integer.toString(cards.indexOf(cardB)));
+			}
+		}
 	}
 }
