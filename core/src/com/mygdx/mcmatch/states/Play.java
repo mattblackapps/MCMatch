@@ -26,7 +26,7 @@ public class Play extends GameState implements Touchable {
 	private SpriteBatch batch;
 	private TouchProcessor tp;
 
-	private int numCards = 4;
+	private int numCards = 12;
 	private CardFrame cardFrame;
 	private List<Card> cards;
 	private Card cardA;

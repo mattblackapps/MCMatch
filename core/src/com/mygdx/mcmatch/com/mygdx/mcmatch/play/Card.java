@@ -54,37 +54,48 @@ public class Card implements Touchable {
     public void render() {
         switch (state) {
             case IDLE:
+                // Draw Background
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.DARK_GRAY);
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
                 break;
             case FLIPPED:
+                // Draw Background
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(Color.DARK_GRAY);
-                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+                shapeRenderer.rect(rect.x +2, rect.y +2, rect.width -4, rect.height -4);
                 shapeRenderer.end();
+
+                // Draw Border
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.LIGHT_GRAY);
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
+
+                // Draw text
                 batch.begin();
                 font.setColor(fontColor1);
-                font.draw(batch, layout, center.x + layout.width / 3, center.y + layout.height / 3);
+                font.draw(batch, layout, rect.x + layout.width / 3, center.y + layout.height / 3);
                 batch.end();
                 break;
             case MATCHED:
+                // Draw Background
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(0.2f, 0.4f, 0.2f, 1.0f);
                 shapeRenderer.rect(rect.x +2, rect.y +2, rect.width -4, rect.height -4);
                 shapeRenderer.end();
+
+                // Draw Border
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.GOLD);
                 shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
                 shapeRenderer.end();
+
+                // Draw text
                 batch.begin();
                 font.setColor(fontColor2);
-                font.draw(batch, layout, center.x + layout.width / 3, center.y + layout.height / 3);
+                font.draw(batch, layout, rect.x + layout.width / 3, center.y + layout.height / 3);
                 batch.end();
             default:
                 break;
