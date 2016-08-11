@@ -63,8 +63,8 @@ public class Card implements Touchable {
                 break;
             case MATCHED:
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.setColor(Color.GREEN);
-                shapeRenderer.rect(rect.x +10, rect.y +10, rect.width -10, rect.height -10);
+                shapeRenderer.setColor(0.2f, 0.4f, 0.2f, 1.0f);
+                shapeRenderer.rect(rect.x +2, rect.y +2, rect.width -4, rect.height -4);
                 shapeRenderer.end();
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
                 shapeRenderer.setColor(Color.GOLD);

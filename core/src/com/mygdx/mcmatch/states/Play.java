@@ -20,13 +20,13 @@ import java.util.Map;
 public class Play extends GameState implements Touchable {
 
 	public enum PlayState {
-		IDLE, ONEFLIP
+		IDLE, ONEFLIP, TWOFLIP, MATCH
 	}
 
 	private SpriteBatch batch;
 	private TouchProcessor tp;
 
-	private int numCards = 10;
+	private int numCards = 4;
 	private CardFrame cardFrame;
 	private List<Card> cards;
 	private Card cardA;
@@ -71,6 +71,12 @@ public class Play extends GameState implements Touchable {
 					case ONEFLIP:
 						handleMatch(card);
 						break;
+					case TWOFLIP:
+						cardA.toggleFlipped();
+						cardB.toggleFlipped();
+						cardA = null;
+						cardB = null;
+						handleFlip(card);
 				}
 			}
 		}
@@ -117,18 +123,18 @@ public class Play extends GameState implements Touchable {
 	private void handleMatch(Card card) {
 		if(card.getState() == Card.CardState.IDLE && cardA != null) { // cardA exists
 			cardB = card;
-			if(cardA.getWord().equals(cardB.getWord())) {
+			if(cardA.getWord().equals(cardB.getWord())) { // Match
 				cardA.setMatched();
 				cardB.setMatched();
 				state = PlayState.IDLE;
 				System.out.println("Cards match: " + Integer.toString(cards.indexOf(cardA)) + " & " + Integer.toString(cards.indexOf(cardB)));
 			} else { // No match
-				cardA.toggleFlipped();
-				cardA = null;
-				cardB = null;
-				state = PlayState.IDLE;
+				cardB.toggleFlipped();
+				state = PlayState.TWOFLIP;
 				System.out.println("Cards dont match: " + Integer.toString(cards.indexOf(cardA)) + " & " + Integer.toString(cards.indexOf(cardB)));
 			}
+		} else {
+			System.out.println("Else?");
 		}
 	}
 }

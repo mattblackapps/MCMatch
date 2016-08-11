@@ -14,9 +14,6 @@ public class CardFrame {
 
     private List<Card> cards;
     private int x, y, w, h;
-    private int numCards;
-    private int cardHeight;
-    private int cardWidth;
     private int rows;
     private int columns;
 
@@ -43,16 +40,23 @@ public class CardFrame {
 
         int xSpace = (w / columns);
         int ySpace = (h / rows);
-        int pad = MathUtils.ceil((xSpace + ySpace) * 0.01f);
+        int pad = MathUtils.ceil((xSpace + ySpace) * 0.01f); // Calculate padding
 
         int i = 0;
-        for(int c = 0; c < columns && i < numCards; c++) {
-            for(int r = 0; r < rows && i < numCards; r++) {
-                int cx = xSpace * c + pad;
-                int cy = ySpace * r + pad;
+        for(int c = 0; c < columns && i < numCards; c++) { // For each column c
+            for(int r = 0; r < rows && i < numCards; r++) { // and each row r
+
+                // Determine card position
+                int cx = x + xSpace * c + pad;
+                int cy = y + ySpace * r + pad;
                 int cw = xSpace - pad*2;
                 int ch = ySpace - pad*2;
-                cards.add(new Card(cx,cy,cw,ch,"TEST",batch));
+
+                // Determine card text
+                String text = Dealer.getInstance().getNextFor(numCards);
+
+                // Add new card to the list
+                cards.add(new Card(cx,cy,cw,ch,text,batch));
                 i++;
             }
         }
